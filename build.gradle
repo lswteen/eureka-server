@@ -19,7 +19,7 @@ apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
-apply plugin: 'war'
+apply plugin: 'jar'
 apply plugin: 'com.palantir.docker'
 
 
@@ -68,9 +68,9 @@ dependencyManagement {
 docker {
     dependsOn build
     dockerfile file('docker/Dockerfile')
-    name "wmp/${war.baseName}:${war.version}"
-    files war.archivePath
-    buildArgs(['WAR_FILE': "${war.archiveName}"])
+    name "wmp/${jar.baseName}:${jar.version}"
+    files jar.archivePath
+    buildArgs(['JAR_FILE': "${jar.archiveName}"])
     noCache true
 }
 
