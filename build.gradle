@@ -15,28 +15,26 @@ buildscript {
     }
 }
 
+
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
-apply plugin: 'jar'
 apply plugin: 'com.palantir.docker'
 
-
-group = 'com.sunu.eureka'
-version = '0.0.1-SNAPSHOT'
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
-
-description = "eureka-server"
+bootJar {
+    baseName = 'eureka-server-docker'
+    version =  '0.1.0'
+}
 
 repositories {
     mavenCentral()
 }
+group = 'com.sunu.eureka'
+version = '0.0.1-SNAPSHOT'
+description = "eureka-server"
 
 def javaVersion = JavaVersion.VERSION_1_8
-
-
 sourceCompatibility = javaVersion
 targetCompatibility = javaVersion
 
@@ -45,17 +43,17 @@ tasks.withType(JavaCompile) {
 }
 
 
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
 ext {
     springCloudVersion = 'Finchley.SR1'
     dockerComposeRuleJunit4Version = '0.34.0'
     jsonPathVersion = '2.4.0'
-    snippetsDir = file('build/generated-snippets')
-    asciidocDir = file('src/docs/asciidoc')
 }
 
 dependencies {
     compile('org.springframework.cloud:spring-cloud-starter-netflix-eureka-server')
-    providedRuntime('org.springframework.boot:spring-boot-starter-tomcat')
     testCompile('org.springframework.boot:spring-boot-starter-test')
 }
 
@@ -67,10 +65,7 @@ dependencyManagement {
 
 docker {
     dependsOn build
-    dockerfile file('docker/Dockerfile')
-    name "wmp/${jar.baseName}:${jar.version}"
-    files jar.archivePath
-    buildArgs(['JAR_FILE': "${jar.archiveName}"])
-    noCache true
+    name "${project.group}/${bootJar.baseName}"
+    files bootJar.archivePath
+    buildArgs(['JAR_FILE': "${bootJar.archiveName}"])
 }
-
